@@ -60,22 +60,12 @@ class TransactionLogs(APIView):
     In a production system, transaction logs would be stored in a database.
     """
     def get(self, request, charger_id=None):
-        # For demonstration, we simulate some transaction logs.
+        if charger_id not in active_chargers:
+            return JsonResponse({"error": "Charger not found"}, status=404)
         logs = [
-            {
-                "transaction_id": 12345,
-                "charger_id": charger_id or "unknown",
-                "start_time": "2025-02-26T12:00:00Z",
-                "end_time": "2025-02-26T12:30:00Z",
-                "status": "Completed"
-            },
-            {
-                "transaction_id": 12346,
-                "charger_id": charger_id or "unknown",
-                "start_time": "2025-02-26T13:00:00Z",
-                "end_time": None,
-                "status": "Ongoing"
-            }
+            {"transaction_id": 12345, "start_time": "2025-02-26T12:00:00Z", "status": "Active", "command": "StartTransaction"},
+            {"transaction_id": 67890, "start_time": "2025-02-26T12:30:00Z", "status": "Completed", "command": "StopTransaction"},
+            #etc.. should be got from DB
         ]
         return JsonResponse({"transaction_logs": logs})
 
